@@ -23,12 +23,15 @@ pipeline {
                 
                 // Add a tag to the builded image
                 sh 'docker tag tif-back matesape/tif-back:latest'
-                
+
                 // Push tagged image to dockerhub
                 sh 'docker push matesape/tif-back:latest'
             }
         }
         stage('unit-tests') {
+            environment{
+                MONGO_URI= 'mongodb://mongo:oLBAFct40fU3bUFwVd54@containers-us-west-124.railway.app:6497'
+            }
             steps{
                 // Run react unit tests
                 sh 'npm run test:coverage'

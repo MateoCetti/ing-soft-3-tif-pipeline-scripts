@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
+                
+                sh 'npm i'
+                
+            }
+        }
+        /*stage('test') {
+            post {
+                always {
+                  publishHTML target: [
+                    allowMissing         : false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll             : true,
+                    reportDir            : 'coverage/lcov-report',
+                    reportFiles          : 'index.html',
+                    reportName           : 'Test Report'
+                  ]
+                }
+            }
+        }*/
+        stage('Docker upload') {
+            environment {
+                DOCKER_CREDS = credentials('bae6860c-23b8-4a63-a7e2-043ce862c8a5')
+            }
+            steps {
+                sh 'docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW'
+                
+                sh 'docker build -t "tif-back" .'
+                
+                sh 'docker tag tif-back matesape/tif-back:latest'
+                
+                sh 'docker push matesape/tif-back:latest'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                // git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
+                // sh 'npm i'
+                
+                sh 'railway link 611ad00f-90b1-4c21-bb7f-78982111c685'
+                sh 'railway up -s tif_back'
+            }
+        }
+    }
+}

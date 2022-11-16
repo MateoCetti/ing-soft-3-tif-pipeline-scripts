@@ -4,13 +4,21 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
+                // git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
+                // sh 'npm i'
+                
+                git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-front.git'
+
                 
                 sh 'npm i'
-                
+                sh 'npm run build'
             }
         }
-        /*stage('test') {
+        stage('test') {
+            steps{
+                // Run react tests
+                sh 'npm run test:coverage'
+            }
             post {
                 always {
                   publishHTML target: [
@@ -23,7 +31,7 @@ pipeline {
                   ]
                 }
             }
-        }*/
+        }
         stage('Docker upload') {
             environment {
                 DOCKER_CREDS = credentials('bae6860c-23b8-4a63-a7e2-043ce862c8a5')
@@ -31,20 +39,23 @@ pipeline {
             steps {
                 sh 'docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW'
                 
-                sh 'docker build -t "tif-back" .'
+                sh 'docker build -t "tif-front" .'
                 
-                sh 'docker tag tif-back matesape/tif-back:latest'
+                sh 'docker tag tif-front matesape/tif-front:latest'
                 
-                sh 'docker push matesape/tif-back:latest'
+                sh 'docker push matesape/tif-front:latest'
             }
         }
         stage('Deploy') {
+            environment {
+                BACK_URI = "https://tif-back-production.up.railway.app.pepe"
+            }
             steps {
                 // git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
                 // sh 'npm i'
                 
                 sh 'railway link 611ad00f-90b1-4c21-bb7f-78982111c685'
-                sh 'railway up -s tif_back'
+                sh 'railway up -s tif_front'
             }
         }
     }

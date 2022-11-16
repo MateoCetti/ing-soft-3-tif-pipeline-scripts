@@ -28,6 +28,24 @@ pipeline {
                 sh 'docker push matesape/tif-back:latest'
             }
         }
+        stage('unit-tests') {
+            steps{
+                // Run react unit tests
+                sh 'npm run test:coverage'
+            }
+            post {
+                always {
+                  publishHTML target: [
+                    allowMissing         : false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll             : true,
+                    reportDir            : 'coverage/lcov-report',
+                    reportFiles          : 'index.html',
+                    reportName           : 'Test Report'
+                  ]
+                }
+            }
+        }        
         stage('Deployment') {
             steps {
                 // Link railway local project with remote one

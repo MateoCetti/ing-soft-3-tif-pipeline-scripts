@@ -30,7 +30,9 @@ pipeline {
         }
         stage('unit-tests') {
             environment{
-                MONGO_URI= 'mongodb://mongo:oLBAFct40fU3bUFwVd54@containers-us-west-124.railway.app:6497'
+                MONGO_URI = 'mongodb://mongo:oLBAFct40fU3bUFwVd54@containers-us-west-124.railway.app:6497'
+                DATABASE = 'pokemon_db'
+                COLLECTION = 'pokemon_collection'
             }
             steps{
                 // Run react unit tests

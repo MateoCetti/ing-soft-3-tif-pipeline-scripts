@@ -3,14 +3,41 @@ pipeline {
 
     stages {
         stage('Build') {
+            environment {
+                DOCKER_CREDS = credentials('bae6860c-23b8-4a63-a7e2-043ce862c8a5')
+            }
             steps {
+                // Pull from repo
                 git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
                 
+                // Install dependencies (build for express)
                 sh 'npm i'
+
+                // Run unit tests
+
+                // login to dockerhub with user credentials
+                sh 'docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW'
                 
+                // build docker image with project Dockerfile
+                sh 'docker build -t "tif-back" .'
+                
+                // Add a tag to the builded image
+                sh 'docker tag tif-back matesape/tif-back:latest'
+                
+                // Push tagged image to dockerhub
+                sh 'docker push matesape/tif-back:latest'
             }
         }
-        /*stage('test') {
+        stage('Deployment') {
+            steps {
+                // Link railway local project with remote one
+                sh 'railway link 611ad00f-90b1-4c21-bb7f-78982111c685'
+                
+                // Build dockerfile and push it to railway.app
+                sh 'railway up -s tif_back'
+            }
+        }
+        /*stage('integration-tests') {
             post {
                 always {
                   publishHTML target: [
@@ -23,29 +50,6 @@ pipeline {
                   ]
                 }
             }
-        }*/
-        stage('Docker upload') {
-            environment {
-                DOCKER_CREDS = credentials('bae6860c-23b8-4a63-a7e2-043ce862c8a5')
-            }
-            steps {
-                sh 'docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW'
-                
-                sh 'docker build -t "tif-back" .'
-                
-                sh 'docker tag tif-back matesape/tif-back:latest'
-                
-                sh 'docker push matesape/tif-back:latest'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                // git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
-                // sh 'npm i'
-                
-                sh 'railway link 611ad00f-90b1-4c21-bb7f-78982111c685'
-                sh 'railway up -s tif_back'
-            }
-        }
+        }*/        
     }
 }

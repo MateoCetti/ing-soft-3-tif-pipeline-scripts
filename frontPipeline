@@ -4,19 +4,19 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                // git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
-                // sh 'npm i'
-                
+                // Pull from repo
                 git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-front.git'
 
-                
+                 // Install dependencies
                 sh 'npm i'
+
+                // Build project locally
                 sh 'npm run build'
             }
         }
-        stage('test') {
+        stage('unit-tests') {
             steps{
-                // Run react tests
+                // Run react unit tests
                 sh 'npm run test:coverage'
             }
             post {
@@ -37,24 +37,28 @@ pipeline {
                 DOCKER_CREDS = credentials('bae6860c-23b8-4a63-a7e2-043ce862c8a5')
             }
             steps {
+                // login to dockerhub with user credentials
                 sh 'docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW'
                 
+                // build docker image with project Dockerfile
                 sh 'docker build -t "tif-front" .'
                 
+                // Add a tag to the builded image
                 sh 'docker tag tif-front matesape/tif-front:latest'
                 
+                // Push tagged image to dockerhub
                 sh 'docker push matesape/tif-front:latest'
             }
         }
-        stage('Deploy') {
+        stage('Deployment') {
             environment {
                 BACK_URI = "https://tif-back-production.up.railway.app.pepe"
             }
             steps {
-                // git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
-                // sh 'npm i'
-                
+                // Link railway lcaol project with remote one
                 sh 'railway link 611ad00f-90b1-4c21-bb7f-78982111c685'
+                
+                // Build dockerfile and push it to railway.app
                 sh 'railway up -s tif_front'
             }
         }

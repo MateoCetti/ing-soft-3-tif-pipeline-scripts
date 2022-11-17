@@ -39,7 +39,9 @@ pipeline {
                 sh 'npm run test:coverage'
             }
             post {
-                junit '**/coverage/clover.xml'
+                always{   
+                    junit '**/coverage/clover.xml'
+                }
                 /*always {
                   publishHTML target: [
                     allowMissing         : false,

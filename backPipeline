@@ -40,18 +40,16 @@ pipeline {
             }
             post {
                 always{   
-                    junit '**/junit.xml'
-                }
-                /*always {
-                  publishHTML target: [
-                    allowMissing         : false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll             : true,
-                    reportDir            : 'coverage/lcov-report',
-                    reportFiles          : 'index.html',
-                    reportName           : 'Test Report'
+                    junit '**/junit.xml',
+                    publishHTML target: [
+                        allowMissing         : false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll             : true,
+                        reportDir            : 'coverage/lcov-report',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Test Report'
                   ]
-                }*/
+                }
             }
         }        
         stage('Deployment') {

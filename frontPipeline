@@ -62,7 +62,7 @@ pipeline {
         }
         stage('Integration-tests') {
             environment {
-                FRONT_URL = credentials('https://tif-front-production.up.railway.app/')
+                FRONT_URL = 'https://tif-front-production.up.railway.app/'
             }
             steps {
                 // Pull from repo

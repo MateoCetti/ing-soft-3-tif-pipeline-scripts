@@ -61,19 +61,28 @@ pipeline {
                 sh 'railway up -s tif_back'
             }
         }
-        /*stage('integration-tests') {
+        stage('Integration-tests') {
+            environment {
+                FRONT_URL = 'https://tif-front-production.up.railway.app/'
+            }
+            steps {
+                // Pull from repo
+                git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-integration-tests.git'
+
+                 // Install dependencies
+                sh 'npm ci'
+
+                // Wait for production environment to apply changes
+                sleep(time:15,unit:"SECONDS")
+
+                // Build project locally
+                sh 'npm run test'
+            }
             post {
                 always {
-                  publishHTML target: [
-                    allowMissing         : false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll             : true,
-                    reportDir            : 'coverage/lcov-report',
-                    reportFiles          : 'index.html',
-                    reportName           : 'Test Report'
-                  ]
+                    junit '**/test-results.xml'
                 }
             }
-        }*/        
+        }        
     }
 }

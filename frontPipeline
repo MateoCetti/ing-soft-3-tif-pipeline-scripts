@@ -77,6 +77,11 @@ pipeline {
                 // Build project locally
                 sh 'npm run test'
             }
+            post {
+                always {
+                    junit '**/test-results.xml'
+                }
+            }
         }        
     }
 }

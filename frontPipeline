@@ -8,7 +8,7 @@ pipeline {
                 git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-front.git'
 
                  // Install dependencies
-                sh 'npm i'
+                sh 'npm ci'
 
                 // Build project locally
                 sh 'npm run build'
@@ -51,9 +51,6 @@ pipeline {
             }
         }
         stage('Deployment') {
-            environment {
-                BACK_URI = "https://tif-back-production.up.railway.app.pepe"
-            }
             steps {
                 // Link railway lcaol project with remote one
                 sh 'railway link 611ad00f-90b1-4c21-bb7f-78982111c685'

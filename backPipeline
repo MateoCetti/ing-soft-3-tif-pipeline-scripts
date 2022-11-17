@@ -11,7 +11,7 @@ pipeline {
                 git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
                 
                 // Install dependencies (build for express)
-                sh 'npm i'
+                sh 'npm ci'
 
                 // Run unit tests
 
@@ -39,7 +39,8 @@ pipeline {
                 sh 'npm run test:coverage'
             }
             post {
-                always {
+                junit '**/coverage/clover.xml'
+                /*always {
                   publishHTML target: [
                     allowMissing         : false,
                     alwaysLinkToLastBuild: false,
@@ -48,7 +49,7 @@ pipeline {
                     reportFiles          : 'index.html',
                     reportName           : 'Test Report'
                   ]
-                }
+                }*/
             }
         }        
         stage('Deployment') {

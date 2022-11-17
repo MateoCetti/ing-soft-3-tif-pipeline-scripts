@@ -60,5 +60,20 @@ pipeline {
                 sh 'railway up -s tif_front'
             }
         }
+        stage('Integration-tests') {
+            steps {
+                // Pull from repo
+                git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-integration-tests.git'
+
+                 // Install dependencies
+                sh 'npm ci'
+
+                // Wait for production environment to apply changes
+                sleep(time:10,unit:"SECONDS")
+
+                // Build project locally
+                sh 'npm run test'
+            }
+        }        
     }
 }

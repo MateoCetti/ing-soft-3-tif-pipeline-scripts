@@ -3,9 +3,6 @@ pipeline {
 
     stages {
         stage('Build') {
-            environment {
-                DOCKER_CREDS = credentials('bae6860c-23b8-4a63-a7e2-043ce862c8a5')
-            }
             steps {
                 // Pull from repo
                 git branch:'main', url: 'git@github.com:MateoCetti/ing-soft-3-tif-back.git'
@@ -13,19 +10,6 @@ pipeline {
                 // Install dependencies (build for express)
                 sh 'npm ci'
 
-                // Run unit tests
-
-                // login to dockerhub with user credentials
-                sh 'docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW'
-                
-                // build docker image with project Dockerfile
-                sh 'docker build -t "tif-back" .'
-                
-                // Add a tag to the builded image
-                sh 'docker tag tif-back matesape/tif-back:latest'
-
-                // Push tagged image to dockerhub
-                sh 'docker push matesape/tif-back:latest'
             }
         }
         stage('unit-tests') {
@@ -35,7 +19,7 @@ pipeline {
                 COLLECTION = 'pokemon_collection'
             }
             steps{
-                // Run react unit tests
+                // Run unit tests
                 sh 'npm run test:coverage'
             }
             post {
@@ -51,7 +35,25 @@ pipeline {
                   ]
                 }
             }
-        }        
+        }
+        stage('Docker upload'){
+            environment {
+                DOCKER_CREDS = credentials('bae6860c-23b8-4a63-a7e2-043ce862c8a5')
+            }
+            steps{
+                // login to dockerhub with user credentials
+                sh 'docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW'
+                
+                // build docker image with project Dockerfile
+                sh 'docker build -t "tif-back" .'
+                
+                // Add a tag to the builded image
+                sh 'docker tag tif-back matesape/tif-back:latest'
+
+                // Push tagged image to dockerhub
+                sh 'docker push matesape/tif-back:latest'
+            }
+        }       
         stage('Deployment') {
             steps {
                 // Link railway local project with remote one

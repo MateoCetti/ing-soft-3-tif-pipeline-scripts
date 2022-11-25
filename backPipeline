@@ -14,7 +14,7 @@ pipeline {
         }
         stage('unit-tests') {
             environment{
-                MONGO_URI = 'mongodb://mongo:oLBAFct40fU3bUFwVd54@containers-us-west-124.railway.app:6497'
+                MONGO_URI = credentials('TIF_MONGO_URL')
                 DATABASE = 'pokemon_db'
                 COLLECTION = 'pokemon_collection'
             }
@@ -65,7 +65,7 @@ pipeline {
         }
         stage('Integration-tests') {
             environment {
-                FRONT_URL = 'https://tif-front-production.up.railway.app/'
+                FRONT_URL = credentials('TIF_FRONT_URL')
             }
             steps {
                 // Pull from repo

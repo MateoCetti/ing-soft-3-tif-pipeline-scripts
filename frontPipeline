@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             environment {
-                BACK_URL = 'tif-back-production.up.railway.app'
+                BACK_URL = 'https://tif-back-production.up.railway.app'
             }
             steps {
                 // Pull from repo

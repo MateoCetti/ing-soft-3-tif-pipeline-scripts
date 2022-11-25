@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             environment {
-                REACT_APP_BACK_URI = 'https://tif-back-production.up.railway.app'
+                REACT_APP_BACK_URI = credentials('TIF_BACK_URL')
             }
             steps {
                 // Pull from repo
@@ -65,7 +65,7 @@ pipeline {
         }
         stage('Integration-tests') {
             environment {
-                FRONT_URL = 'https://tif-front-production.up.railway.app/'
+                FRONT_URL = credentials('TIF_FRONT_URL')
             }
             steps {
                 // Pull from repo
